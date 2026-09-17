@@ -10,11 +10,11 @@ from torchvision import transforms
 # paths from where to load the data
 # please read datasets/README.md for more information about the dataset structure and where to place the datasets.
 
-DEFAULT_TRAIN_CSV = "dataset/20250404-properties-dataset/CategorieTechnique_train.csv"
-DEFAULT_VAL_CSV = "dataset/20250404-properties-dataset/CategorieTechnique_val.csv"
-DEFAULT_IMAGES_DIR = "dataset/20250404-properties-dataset/images"
+DEFAULT_TRAIN_CSV = "datasets/20250404-properties-dataset/CategorieTechnique_train.csv"
+DEFAULT_VAL_CSV = "datasets/20250404-properties-dataset/CategorieTechnique_val.csv"
+DEFAULT_IMAGES_DIR = "datasets/20250404-properties-dataset/images"
 DEFAULT_CLASSES_JSON = (
-    "dataset/20250404-properties-dataset/CategorieTechnique_classes.json"
+    "datasets/20250404-properties-dataset/CategorieTechnique_classes.json"
 )
 
 
@@ -84,24 +84,24 @@ def load_data(
     Loads the training and validation datasets, applies transformations, and returns DataLoaders for both.
     """
     print("=" * 60)
-    print("1. CHARGEMENT DES DONNEES")
+    print("1. DATA LOADING")
     print("=" * 60)
 
     # reading csv
     df_train = pd.read_csv(train_csv)
     df_val = pd.read_csv(val_csv)
 
-    print(f"[Data] Train CSV : {len(df_train)} lignes")
-    print(f"[Data] Val CSV : {len(df_val)} lignes")
+    print(f"[Data] Train CSV : {len(df_train)} rows")
+    print(f"[Data] Val CSV : {len(df_val)} rows")
 
-    # Sous-échantillonnage optionnel si spécifié (ex: pour tests rapides)
+    # Optional subsampling if specified (e.g. for quick tests)
     if max_train_samples is not None and max_train_samples < len(df_train):
         df_train = df_train.iloc[:max_train_samples]
-        print(f"[Data] Utilisation d'un sous-ensemble train : {len(df_train)} lignes")
+        print(f"[Data] Using a train subset : {len(df_train)} rows")
 
     if max_val_samples is not None and max_val_samples < len(df_val):
         df_val = df_val.iloc[:max_val_samples]
-        print(f"[Data] Utilisation d'un sous-ensemble val   : {len(df_val)} lignes")
+        print(f"[Data] Using a val subset   : {len(df_val)} rows")
 
     # loading class names from the JSON file
     if os.path.exists(classes_json):
@@ -110,9 +110,9 @@ def load_data(
             # we need to invert the dict to have {int: str} instead of {str: int}
             class_names = {int(v): k for k, v in classes_dict.items()}
     else:
-        raise FileNotFoundError(f"Le fichier {classes_json} est introuvable.")
+        raise FileNotFoundError(f"File {classes_json} not found.")
 
-    print(f"[Data] Classes detectées ({len(class_names)}) : {class_names}")
+    print(f"[Data] Detected classes ({len(class_names)}) : {class_names}")
 
     # applying transformations and creating datasets
     transform = get_transforms_tiny()  # TODO: automatically adapt the transform based on the model used (convnext_tiny, convnext_small, etc.)

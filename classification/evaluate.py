@@ -20,7 +20,7 @@ def evaluate_model(
         device = next(model.parameters()).device
 
     print("\n" + "=" * 60)
-    print("EVALUATION SUR LE DATASET DE VALIDATION")
+    print("EVALUATION ON VALIDATION DATASET")
     print("=" * 60)
 
     model.eval()
@@ -49,7 +49,7 @@ def evaluate_model(
 
             if batch_idx % 50 == 0 or batch_idx == len(val_loader):
                 print(
-                    f"Evaluation : Batch [{batch_idx:04d}/{len(val_loader):04d}] traite",
+                    f"Evaluation : Batch [{batch_idx:04d}/{len(val_loader):04d}] processed",
                     end="\r",
                 )
 
@@ -63,21 +63,21 @@ def evaluate_model(
     # formatting the evaluation report
     lines = []
     lines.append("=" * 70)
-    lines.append("               BILAN D'EVALUATION DU MODELE CONVNEXT")
+    lines.append("               CONVNEXT MODEL EVALUATION REPORT")
     lines.append("=" * 70)
-    lines.append(f"Date / Heure               : {time.strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append(f"Dispositif utilisé         : {device}")
+    lines.append(f"Date / Time                : {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append(f"Device used                : {device}")
     if total_train_time is not None:
-        lines.append(f"Temps total d'entrainement : {total_train_time:.2f} s")
-    lines.append(f"Temps total d'évaluation   : {eval_total_time:.2f} s")
+        lines.append(f"Total training time        : {total_train_time:.2f} s")
+    lines.append(f"Total evaluation time      : {eval_total_time:.2f} s")
     lines.append("-" * 70)
-    lines.append(f"Nombre total d'images val  : {total_samples}")
-    lines.append(f"Predictions correctes      : {correct_samples}")
-    lines.append(f"Precision globale (Top-1)  : {overall_acc:.2f} %")
+    lines.append(f"Total validation images    : {total_samples}")
+    lines.append(f"Correct predictions        : {correct_samples}")
+    lines.append(f"Overall accuracy (Top-1)   : {overall_acc:.2f} %")
     lines.append("-" * 70)
-    lines.append("DETAILS PAR CLASSE :")
+    lines.append("PER-CLASS DETAILS :")
     lines.append(
-        f"{'ID':<4} {'Nom de la classe':<20} {'Correct / Total':<20} {'Precision':<10}"
+        f"{'ID':<4} {'Class name':<20} {'Correct / Total':<20} {'Accuracy':<10}"
     )
     lines.append("-" * 70)
 
@@ -100,7 +100,7 @@ def evaluate_model(
         f.write(report + "\n")
 
     print("\n" + "=" * 60)
-    print(f"RESULTATS SAUVEGARDES DANS {txt_output_path}")
+    print(f"RESULTS SAVED IN {txt_output_path}")
     print("=" * 60)
     print(report)
 

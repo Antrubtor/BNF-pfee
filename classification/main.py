@@ -1,17 +1,16 @@
 import os
 import sys
 
-import torch
-from evaluate import evaluate_model
-from model import create_convnext_model
-from train import train_model
-
 # this is necessary to ensure that the current directory is in the Python path, so that relative imports work correctly when running this script directly
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
+import torch
 from dataset import load_data
+from evaluate import evaluate_model
+from model import create_convnext_model
+from train import train_model
 
 # ==========================================
 # CONFIG
@@ -36,14 +35,14 @@ def main():
         MAX_TRAIN = 100
         MAX_VAL = 50
         print(
-            "[INFO] Mode rapide active (fast) : 2 epochs sur echantillon reduit pour verifier la chaine."
+            "[INFO] Fast mode active (fast) : 2 epochs on reduced sample to verify the pipeline."
         )
 
     # automatically select device (GPU if available, else CPU)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[Hardware] Dispositif selectionne : {device}")
+    print(f"[Hardware] Selected device : {device}")
     if device.type == "cuda":
-        print(f"[Hardware] GPU detecte : {torch.cuda.get_device_name(0)}")
+        print(f"[Hardware] GPU detected : {torch.cuda.get_device_name(0)}")
 
     # load the data and get the DataLoaders for training and validation
     train_loader, val_loader, class_names = load_data(
@@ -75,7 +74,7 @@ def main():
         total_train_time=total_train_time,
     )
 
-    print("\n[Terminé] Pipeline complete avec succès !")
+    print("\n[Done] Pipeline completed successfully!")
 
 
 if __name__ == "__main__":

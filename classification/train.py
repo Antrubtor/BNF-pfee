@@ -23,7 +23,7 @@ def train_model(
         device = next(model.parameters()).device
 
     print("\n" + "=" * 60)
-    print(f"DEBUT DE L'ENTRAINEMENT ({epochs} EPOCHS)")
+    print(f"STARTING TRAINING ({epochs} EPOCHS)")
     print("=" * 60)
 
     criterion = nn.CrossEntropyLoss()
@@ -63,21 +63,21 @@ def train_model(
             epoch_duration = time.perf_counter() - epoch_start
             epoch_avg_loss = running_loss / total_batches if total_batches > 0 else 0.0
             print(
-                f"[INFO] Epoch [{epoch:02d}/{epochs:02d}] terminée en {epoch_duration:.2f}s - "
-                f"Loss moyenne: {epoch_avg_loss:.4f}"
+                f"[INFO] Epoch [{epoch:02d}/{epochs:02d}] finished in {epoch_duration:.2f}s - "
+                f"Average loss: {epoch_avg_loss:.4f}"
             )
 
             # save model weights after each epoch
             os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
             torch.save(model.state_dict(), save_path)
             print(
-                f"[Sauvegarde] Poids de l'époque {epoch}/{epochs} sauvegardés dans : {save_path}"
+                f"[Save] Epoch {epoch}/{epochs} weights saved to : {save_path}"
             )
 
     except KeyboardInterrupt:
-        print("\n[INTERRUPTION] Entrainement stoppé par l'utilisateur.")
+        print("\n[INTERRUPT] Training stopped by user.")
         print(
-            f"[INFO] Les poids de la dernière époque terminée restent sauvegardés dans : {save_path}"
+            f"[INFO] Weights from the last completed epoch remain saved in : {save_path}"
         )
 
     total_train_time = time.perf_counter() - start_time_total
@@ -87,16 +87,16 @@ def train_model(
     seconds = total_train_time % 60
 
     print("\n" + "=" * 60)
-    print("TEMPS TOTAL D'ENTRAINEMENT")
+    print("TOTAL TRAINING TIME")
     print("=" * 60)
     if hours > 0:
         time_str = (
-            f"{hours}h {minutes}m {seconds:.2f}s ({total_train_time:.2f} secondes)"
+            f"{hours}h {minutes}m {seconds:.2f}s ({total_train_time:.2f} seconds)"
         )
     elif minutes > 0:
-        time_str = f"{minutes}m {seconds:.2f}s ({total_train_time:.2f} secondes)"
+        time_str = f"{minutes}m {seconds:.2f}s ({total_train_time:.2f} seconds)"
     else:
-        time_str = f"{seconds:.2f} secondes"
-    print(f"[TIME] Temps total d'entrainement : {time_str}")
+        time_str = f"{seconds:.2f} seconds"
+    print(f"[TIME] Total training time : {time_str}")
 
     return total_train_time

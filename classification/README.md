@@ -27,11 +27,11 @@ source .venv/bin/activate # or .venv\Scripts\activate on Windows
 ### 1. Run full training (full dataset)
 
 ```bash
-uv run python classsification/main.py
+uv run python classification/main.py
 ```
 
 ### 2. Quick test (2 epochs on a small sample)
 
 ```bash
-uv run python classification/train.py fast
+uv run python classification/main.py fast
 ```
