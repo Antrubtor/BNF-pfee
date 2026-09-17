@@ -1,10 +1,10 @@
 # Datasets
 
-In this folder please put all of the datasets given by the BnF.
+Please place all datasets provided by the BnF in this folder.
 
-The architecture of the dataset folder should be as follows:
+The folder structure should be organized as follows:
 
-```bash
+```
 datasets/
 ├── 20250204-orientation-dataset-clean-augmented/
 ├── 20250214-segmentation-dataset-iiif/
