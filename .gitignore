@@ -25,4 +25,5 @@ CLAUDE.md
 data/
 runs/
 *.pt
+weights/
 __pycache__/
