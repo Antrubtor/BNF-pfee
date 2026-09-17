@@ -13,3 +13,5 @@ wheels/
 datasets/**
 !datasets/README.md
 20250214-segmentation-dataset-iiif/
+
+CLAUDE.md
