@@ -12,8 +12,8 @@ Nettoyages appliqués :
   - les fichiers label vides sont conservés : ce sont des négatifs purs
 
 Usage :
-    uv run python prepare_dataset.py                # nc=1, illustrations seules
-    uv run python prepare_dataset.py --classes 0 1  # nc=2, pour l'ablation
+    uv run python src/prepare_dataset.py                # nc=1, illustrations seules
+    uv run python src/prepare_dataset.py --classes 0 1  # nc=2, pour l'ablation
 """
 
 from __future__ import annotations
@@ -22,7 +22,9 @@ import argparse
 import shutil
 from pathlib import Path
 
-SOURCE = Path(__file__).parent / "20250214-segmentation-dataset-iiif"
+from config import DATA, LIVRAISON
+
+SOURCE = LIVRAISON
 NOMS_SOURCE = {0: "Illustration", 1: "Texte"}
 SPLITS = ("train", "val")
 
@@ -142,7 +144,7 @@ def main() -> None:
     if inconnues:
         raise SystemExit(f"classes inconnues : {sorted(inconnues)}")
 
-    sortie = args.out or Path(__file__).parent / "data" / f"detection-nc{len(args.classes)}"
+    sortie = args.out or DATA / f"detection-nc{len(args.classes)}"
     preparer(sortie, args.classes, args.force)
 
 

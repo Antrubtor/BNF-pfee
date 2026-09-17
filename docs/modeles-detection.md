@@ -90,7 +90,7 @@ Licence AGPL-3.0, validé pour ce projet.
 |---|---|---|
 | `imgsz` | 800 | Résolution du corpus, et multiple de 32. **239 vues (5 %) ne sont pas en 800×800** — surtout des couvertures `-f1` : elles seront letterboxées |
 | `epochs` | 50 | Premier entraînement |
-| `batch` | 4 + AMP | Contrainte 8 Go de VRAM (RTX 4070 Laptop) |
+| `batch` | 6 | Mesuré : 5,1 Go de VRAM à `batch=4` sur les 8,3 Go disponibles. 6 garde une marge |
 | `seed` | fixée | Reproductibilité |
 | `nc` | 1 | Illustrations seules |
 
