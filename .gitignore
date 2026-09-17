@@ -12,6 +12,11 @@ wheels/
 
 datasets/**
 !datasets/README.md
+# Dataset
 20250214-segmentation-dataset-iiif/
 
+# Python
+.venv/
+
+# AI
 CLAUDE.md
