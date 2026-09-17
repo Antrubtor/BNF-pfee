@@ -20,3 +20,9 @@ datasets/**
 
 # AI
 CLAUDE.md
+
+# Dérivés générés (prepare_dataset.py) et sorties d'entraînement
+data/
+runs/
+*.pt
+__pycache__/
