@@ -1,8 +1,28 @@
 import os
+import sys
 import time
 from collections import defaultdict
 
 import torch
+
+# this is necessary to ensure that the current directory is in the Python path, so that relative imports work correctly when running this script directly
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+from dataset import get_transforms_tiny, load_data
+from model import create_convnext_model
+
+EPOCHS = 2
+BATCH_SIZE = 32  # optimized for GPU with 8GB VRAM, adjust if needed
+LEARNING_RATE = 1e-4
+WEIGHTS_PATH = "convnext_weights.pth"
+RESULTS_TXT = "resultats_evaluation.txt"
+
+
+# Optional: Limit the number of samples for quick testing
+MAX_TRAIN = None
+MAX_VAL = None
 
 
 def evaluate_model(
@@ -105,3 +125,47 @@ def evaluate_model(
     print(report)
 
     return overall_acc
+
+
+if __name__ == "__main__":
+    # load the weights of the model !!!
+    if len(sys.argv) != 3 or sys.argv[1].lower() not in ["--weights"]:
+        raise RuntimeError("missing the weights !")
+
+    model_path = sys.argv[2]
+
+    _, val_loader, class_names = load_data(
+        batch_size=BATCH_SIZE, max_train_samples=MAX_TRAIN, max_val_samples=MAX_VAL
+    )
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = create_convnext_model(
+        num_classes=len(class_names), pretrained=True, device=device
+    )
+
+    model.load_state_dict(torch.load(model_path, weights_only=True))
+
+    evaluate_model(model, val_loader=val_loader, class_names=class_names)
+
+    # test on a single image
+
+    # image_path = (
+    #     "classification/dessin.png"  # image will have good dimensions for the model
+    # )
+    # image = Image.open(image_path).convert("RGB")
+
+    # transform = get_transforms_tiny()
+
+    # image_to_eval = transform(image).unsqueeze(0).to(device)
+
+    # model.eval()
+
+    # with torch.no_grad():
+    #     outputs = model(image_to_eval)
+    #     _, preds = torch.max(outputs, 1)
+
+    #     predicted_class_id = int(preds.item())
+    #     predicted_class_name = class_names[predicted_class_id]
+
+    #     print(f"Predicted class: {predicted_class_id} ({predicted_class_name})")
