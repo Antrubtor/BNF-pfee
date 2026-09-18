@@ -11,6 +11,7 @@ detection/
 │   ├── config.py             # shared paths, Ultralytics configuration
 │   ├── prepare_dataset.py    # BnF delivery -> clean YOLO dataset
 │   ├── train.py              # training
+│   ├── predict.py            # inference on images, annotated output
 │   └── evaluate.py           # detailed metrics (see docs/)
 ├── docs/
 │   └── modeles-detection.md  # evaluation metrics, model, hyperparameters
@@ -37,7 +38,13 @@ uv run python detection/src/train.py
 
 # 3. detailed evaluation
 uv run python detection/src/evaluate.py --weights detection/runs/yolo26l/weights/best.pt
+
+# 4. inference on one or several images (annotated .jpg in detection/runs/predict/)
+uv run python detection/src/predict.py --weights detection/runs/yolo26l/weights/best.pt page.jpg --json
 ```
+
+`predict.py` prints the score and box of each detection. Like the training corpus, images
+are squashed to 800×800; `--letterbox` keeps the native aspect ratio.
 
 ## The `.pt` files
 
