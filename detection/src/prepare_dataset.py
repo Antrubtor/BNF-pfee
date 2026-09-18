@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Construit un dataset YOLO dérivé, propre, à partir de la livraison BnF.
 
-La livraison (`20250214-segmentation-dataset-iiif/`) est traitée en lecture seule :
-rien n'y est écrit. Le dérivé est produit dans `data/`, avec des liens symboliques
+La livraison (`datasets/20250214-segmentation-dataset-iiif/`) est traitée en lecture seule :
+rien n'y est écrit. Le dérivé est produit dans `detection/data/`, avec des liens symboliques
 vers les images pour ne pas dupliquer 1,1 Go.
 
 Nettoyages appliqués :
@@ -12,8 +12,8 @@ Nettoyages appliqués :
   - les fichiers label vides sont conservés : ce sont des négatifs purs
 
 Usage :
-    uv run python src/prepare_dataset.py                # nc=1, illustrations seules
-    uv run python src/prepare_dataset.py --classes 0 1  # nc=2, pour l'ablation
+    uv run python detection/src/prepare_dataset.py                # nc=1, illustrations seules
+    uv run python detection/src/prepare_dataset.py --classes 0 1  # nc=2, pour l'ablation
 """
 
 from __future__ import annotations
@@ -136,7 +136,7 @@ def main() -> None:
     p.add_argument("--classes", type=int, nargs="+", default=[0],
                    help="classes source à conserver (0=Illustration, 1=Texte). Défaut : 0")
     p.add_argument("--out", type=Path, default=None,
-                   help="dossier de sortie. Défaut : data/detection-nc<N>")
+                   help="dossier de sortie. Défaut : detection/data/detection-nc<N>")
     p.add_argument("--force", action="store_true", help="écrase le dossier de sortie s'il existe")
     args = p.parse_args()
 

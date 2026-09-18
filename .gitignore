@@ -15,13 +15,15 @@ datasets/**
 
 # Dataset
 20250214-segmentation-dataset-iiif/
+datasets/
 
-# Dérivés générés par src/prepare_dataset.py
-data/
+# Dérivés générés par detection/src/prepare_dataset.py
+detection/data/
 
 # Poids : pré-entraînés (entrées) et produits par l'entraînement (sorties)
-models/
-runs/
+detection/models/
+detection/runs/
+detection/docs/runs/
 *.pt
 
 # Python

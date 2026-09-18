@@ -5,9 +5,9 @@ Les valeurs par défaut sont celles arrêtées dans docs/modeles-detection.md.
 Le dataset doit avoir été produit au préalable par prepare_dataset.py.
 
 Usage :
-    uv run python src/train.py                        # run complet, 50 epochs
-    uv run python src/train.py --epochs 2 --name test # essai rapide
-    uv run python src/train.py --no-mosaic --no-fliplr
+    uv run python detection/src/train.py                        # run complet, 50 epochs
+    uv run python detection/src/train.py --epochs 2 --name test # essai rapide
+    uv run python detection/src/train.py --no-mosaic --no-fliplr
 """
 
 from __future__ import annotations
@@ -67,7 +67,7 @@ def main() -> None:
 
     poids = args.project / args.name / "weights" / "best.pt"
     print(f"\nPoids : {poids}")
-    print(f"Évaluation détaillée :\n  uv run python src/evaluate.py --weights {poids}")
+    print(f"Évaluation détaillée :\n  uv run python detection/src/evaluate.py --weights {poids}")
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@ de contenu, taux de faux positifs sur les vues sans illustration, IoU moyenne de
 boîtes appariées.
 
 Usage :
-    uv run python src/evaluate.py --weights runs/yolo26l/weights/best.pt
-    uv run python src/evaluate.py --weights ... --conf 0.4 --json resultats.json
+    uv run python detection/src/evaluate.py --weights detection/runs/yolo26l/weights/best.pt
+    uv run python detection/src/evaluate.py --weights ... --conf 0.4 --json resultats.json
 """
 
 from __future__ import annotations

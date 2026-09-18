@@ -1,21 +1,22 @@
 """Chemins et constantes partagés par les scripts du projet.
 
-Un seul endroit où sont définis la racine du repo, la livraison BnF et les dossiers
-produits, pour éviter qu'ils divergent entre les scripts.
+Un seul endroit où sont définis la racine du repo, le dossier detection/, la livraison
+BnF et les dossiers produits, pour éviter qu'ils divergent entre les scripts.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-RACINE = Path(__file__).resolve().parents[1]
+DETECTION = Path(__file__).resolve().parents[1]
+RACINE = DETECTION.parent
 
 # Livraison BnF — LECTURE SEULE, ne jamais y écrire
-LIVRAISON = RACINE / "20250214-segmentation-dataset-iiif"
+LIVRAISON = RACINE / "datasets" / "20250214-segmentation-dataset-iiif"
 
-DATA = RACINE / "data"                       # dérivés produits par prepare_dataset.py
-MODELS = RACINE / "models"                   # poids pré-entraînés (entrées)
-RUNS = RACINE / "runs"                       # sorties d'entraînement
+DATA = DETECTION / "data"                    # dérivés produits par prepare_dataset.py
+MODELS = DETECTION / "models"                # poids pré-entraînés (entrées)
+RUNS = DETECTION / "runs"                    # sorties d'entraînement
 DATASET_DEFAUT = DATA / "detection-nc1" / "dataset.yaml"
 
 
