@@ -1,61 +1,61 @@
-# Détection d'illustrations
+# Illustration detection
 
-Détection des illustrations sur vues numérisées Gallica, dans le cadre du PFEE mené
-avec la BnF. La classification des illustrations détectées relève d'un autre périmètre.
+Detection of illustrations on digitized Gallica views, as part of the PFEE carried out
+with the BnF. Classification of the detected illustrations is a separate scope.
 
 ## Structure
 
 ```
 detection/
 ├── src/
-│   ├── config.py             # chemins partagés, configuration Ultralytics
-│   ├── prepare_dataset.py    # livraison BnF -> dataset YOLO propre
-│   ├── train.py              # entraînement
-│   └── evaluate.py           # métriques détaillées (cf. docs/)
+│   ├── config.py             # shared paths, Ultralytics configuration
+│   ├── prepare_dataset.py    # BnF delivery -> clean YOLO dataset
+│   ├── train.py              # training
+│   └── evaluate.py           # detailed metrics (see docs/)
 ├── docs/
-│   └── modeles-detection.md  # métriques d'évaluation, modèle, hyperparamètres
+│   └── modeles-detection.md  # evaluation metrics, model, hyperparameters
 │
-├── data/                     # dérivés générés (non versionné)
-├── models/                   # poids pré-entraînés, entrées (non versionné)
-└── runs/                     # sorties d'entraînement (non versionné)
+├── data/                     # generated derived datasets (not versioned)
+├── models/                   # pretrained weights, inputs (not versioned)
+└── runs/                     # training outputs (not versioned)
 ```
 
-La livraison BnF se trouve dans `../datasets/20250214-segmentation-dataset-iiif/`
-(lecture seule, non versionnée). Les trois derniers dossiers sont ignorés par git : soit
-ils sont volumineux, soit ils se régénèrent à partir du code.
+The BnF delivery lives in `../datasets/20250214-segmentation-dataset-iiif/`
+(read-only, not versioned). The last three folders are ignored by git: they are either
+large or regenerated from the code.
 
-## Enchaînement
+## Workflow
 
-Les commandes se lancent depuis la racine du repo (où vit l'environnement uv).
+Commands are run from the repo root (where the uv environment lives).
 
 ```bash
-# 1. dataset dérivé : filtrage des classes, déduplication, chemins locaux
+# 1. derived dataset: class filtering, deduplication, local paths
 uv run python detection/src/prepare_dataset.py
 
-# 2. entraînement (valeurs par défaut = celles de docs/modeles-detection.md)
+# 2. training (defaults = those of docs/modeles-detection.md)
 uv run python detection/src/train.py
 
-# 3. évaluation détaillée
+# 3. detailed evaluation
 uv run python detection/src/evaluate.py --weights detection/runs/yolo26l/weights/best.pt
 ```
 
-## Les `.pt`
+## The `.pt` files
 
-Trois natures différentes, à ne pas confondre :
+Three different natures, not to be confused:
 
-| Emplacement | Nature |
+| Location | Nature |
 |---|---|
-| `models/yolo26l.pt` | Poids pré-entraînés COCO — **entrée** de l'entraînement |
-| `models/yolo26n.pt` | Modèle nano téléchargé par Ultralytics pour son test AMP au démarrage |
-| `runs/<nom>/weights/best.pt` | Poids **produits** par l'entraînement — c'est ce qu'on évalue |
+| `models/yolo26l.pt` | COCO pretrained weights — training **input** |
+| `models/yolo26n.pt` | Nano model downloaded by Ultralytics for its AMP check at startup |
+| `runs/<name>/weights/best.pt` | Weights **produced** by training — this is what gets evaluated |
 
-`src/config.py` force Ultralytics à déposer ses téléchargements dans `models/`, faute de
-quoi ils atterrissent dans le répertoire courant.
+`src/config.py` forces Ultralytics to drop its downloads into `models/`, otherwise they
+end up in the current directory.
 
-## Environnement
+## Environment
 
-Python 3.12 via uv, PyTorch CUDA, Ultralytics. GPU de développement : RTX 4070 Laptop,
-8 Go de VRAM — c'est ce qui contraint `batch` et `imgsz`.
+Python 3.12 via uv, PyTorch CUDA, Ultralytics. Development GPU: RTX 4070 Laptop,
+8 GB of VRAM — this is what constrains `batch` and `imgsz`.
 
 ```bash
 uv sync

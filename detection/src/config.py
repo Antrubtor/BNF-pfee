@@ -1,7 +1,7 @@
-"""Chemins et constantes partagés par les scripts du projet.
+"""Paths and constants shared by the project scripts.
 
-Un seul endroit où sont définis la racine du repo, le dossier detection/, la livraison
-BnF et les dossiers produits, pour éviter qu'ils divergent entre les scripts.
+Single place where the repo root, the detection/ folder, the BnF delivery and the
+generated folders are defined, so they cannot diverge between scripts.
 """
 
 from __future__ import annotations
@@ -9,22 +9,22 @@ from __future__ import annotations
 from pathlib import Path
 
 DETECTION = Path(__file__).resolve().parents[1]
-RACINE = DETECTION.parent
+ROOT = DETECTION.parent
 
-# Livraison BnF — LECTURE SEULE, ne jamais y écrire
-LIVRAISON = RACINE / "datasets" / "20250214-segmentation-dataset-iiif"
+# BnF delivery — READ-ONLY, never write into it
+DELIVERY = ROOT / "datasets" / "20250214-segmentation-dataset-iiif"
 
-DATA = DETECTION / "data"                    # dérivés produits par prepare_dataset.py
-MODELS = DETECTION / "models"                # poids pré-entraînés (entrées)
-RUNS = DETECTION / "runs"                    # sorties d'entraînement
-DATASET_DEFAUT = DATA / "detection-nc1" / "dataset.yaml"
+DATA = DETECTION / "data"                    # derived datasets produced by prepare_dataset.py
+MODELS = DETECTION / "models"                # pretrained weights (inputs)
+RUNS = DETECTION / "runs"                    # training outputs
+DEFAULT_DATASET = DATA / "detection-nc1" / "dataset.yaml"
 
 
-def configurer_ultralytics() -> None:
-    """Force Ultralytics à télécharger ses poids dans models/.
+def configure_ultralytics() -> None:
+    """Force Ultralytics to download its weights into models/.
 
-    Sans ça, il les dépose dans le répertoire courant et crée un dossier `weights/`
-    à la racine, au gré de l'endroit d'où le script est lancé.
+    Otherwise it drops them in the current directory and creates a `weights/` folder
+    at the root, depending on where the script is launched from.
     """
     from ultralytics.utils import SETTINGS
 

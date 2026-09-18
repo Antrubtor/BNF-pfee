@@ -1,105 +1,105 @@
-# Détection d'illustrations — évaluation et modèle
+# Illustration detection — evaluation and model
 
-On détecte les **illustrations** : zéro, une ou plusieurs par vue. Les boîtes produites
-alimentent ensuite l'étape de classification, qui ne relève pas de ce document.
+We detect **illustrations**: zero, one or several per view. The boxes produced then feed
+the classification stage, which is out of scope for this document.
 
-Dernière mise à jour : 2026-09-17
+Last updated: 2026-09-17
 
 ---
 
-## 1. Métriques d'évaluation
+## 1. Evaluation metrics
 
-C'est la partie qui décide. Tant que ces métriques ne sont pas implémentées et figées,
-lancer un entraînement ne sert à rien : les résultats ne seraient pas comparables.
+This is the part that decides. As long as these metrics are not implemented and frozen,
+launching a training run is pointless: the results would not be comparable.
 
-### L'IoU, socle de toutes les métriques
+### IoU, the foundation of all metrics
 
-L'**IoU** (intersection sur union) entre une boîte prédite et une boîte de vérité terrain
-est le **critère d'appariement** de toute la chaîne :
+The **IoU** (intersection over union) between a predicted box and a ground-truth box is
+the **matching criterion** of the whole chain:
 
-- **AP50** = average precision en comptant correcte toute prédiction dont l'**IoU ≥ 0.50**
-- **mAP50-95** = la même, moyennée sur dix seuils d'IoU de 0.50 à 0.95
+- **AP50** = average precision, counting as correct any prediction with **IoU ≥ 0.50**
+- **mAP50-95** = the same, averaged over ten IoU thresholds from 0.50 to 0.95
 
-Soit : **IoU → appariement → comptage TP/FP/FN → précision/rappel → AP**.
+That is: **IoU → matching → TP/FP/FN counts → precision/recall → AP**.
 
-**Pourquoi ne pas la rapporter seule.** Elle ne se calcule qu'entre deux boîtes déjà
-appariées, donc elle est aveugle aux illustrations manquées et à celles inventées.
-Exemple : une page en contient 3, le modèle n'en prédit qu'une avec IoU 0.95.
-IoU moyenne 0.95 — excellente ; rappel réel 33 %.
+**Why not report it alone.** It can only be computed between two already-matched boxes,
+so it is blind to missed illustrations and to invented ones.
+Example: a page contains 3, the model predicts only one with IoU 0.95.
+Mean IoU 0.95 — excellent; real recall 33%.
 
-### Métrique principale
+### Primary metric
 
-**Précision à rappel fixé** (typiquement P@R=0.90).
+**Precision at fixed recall** (typically P@R=0.90).
 
-Le problème métier est l'**hallucination d'illustrations** : le dataset livre 372 vues où
-le modèle précédent en a inventé une. On veut donc savoir combien de fausses détections
-coûte un niveau de rappel donné.
+The business problem is **illustration hallucination**: the dataset ships 372 views where
+the previous model invented one. We therefore want to know how many false detections a
+given recall level costs.
 
-### Métriques standard
+### Standard metrics
 
-| Métrique | Pourquoi |
+| Metric | Why |
 |---|---|
-| **mAP50-95** | Comparabilité avec la littérature |
-| **AP50** | Lecture plus directe de la qualité de détection |
-| **Précision / rappel / F1** à seuil fixé | Le point de fonctionnement réel |
+| **mAP50-95** | Comparability with the literature |
+| **AP50** | More direct reading of detection quality |
+| **Precision / recall / F1** at a fixed threshold | The real operating point |
 
-### Stratifications — obligatoires
+### Stratifications — mandatory
 
-**Par taille de boîte.** La distribution des aires est bimodale : p25 = 3 % de la page,
-p75 = 74 %. Les grosses boîtes sont faciles et écrasent la moyenne — **sans stratification,
-le régime « petites illustrations » est invisible.**
+**By box size.** The area distribution is bimodal: p25 = 3% of the page,
+p75 = 74%. Large boxes are easy and dominate the average — **without stratification,
+the "small illustrations" regime is invisible.**
 
-**Par tag de contenu** (`photographie`, `comic_book`, `film_roll`, `plan`…) : indique sur
-quelle sous-population le modèle échoue.
+**By content tag** (`photographie`, `comic_book`, `film_roll`, `plan`…): shows which
+sub-population the model fails on.
 
-### Métriques spécifiques au problème
+### Problem-specific metrics
 
-| Métrique | Ce qu'elle capture |
+| Metric | What it captures |
 |---|---|
-| **Taux de faux positifs sur vues sans illustration** | 398 vues n'en contiennent aucune. Mesure directe et lisible de l'hallucination |
-| **IoU moyenne des boîtes appariées** | Une boîte trop lâche produit un recadrage inexploitable pour la classification en aval |
+| **False-positive rate on views without illustrations** | 398 views contain none. Direct, readable measure of hallucination |
+| **Mean IoU of matched boxes** | A box that is too loose yields a crop unusable for downstream classification |
 
-### Conditions de mesure
+### Measurement conditions
 
-- **Découper le test set par `parent_ark`, jamais par vue.** Plusieurs vues d'un même
-  ouvrage sont quasi identiques : découper par vue garantit une fuite.
-- **Labels nettoyés en amont** : 22 doublons exacts et 1 boîte d'aire nulle.
-  Vérifié le 2026-09-17, aucune autre anomalie sur les 11 051 boîtes `Illustration`.
-- **Garder les vues sans illustration** : leur label vide en fait des négatifs purs,
-  et la base de la métrique de faux positifs ci-dessus.
-
----
-
-## 2. Modèle
-
-**YOLO26l.** Génération Ultralytics courante (janvier 2026). Deux de ses apports visent
-directement nos difficultés : **STAL**, une assignation de labels pensée pour les petites
-cibles — on en a ~1 100 sous 1 % de la page — et l'inférence nativement **NMS-free**.
-
-**Ablation NMS, sans coût.** Le modèle s'évalue avec `nms=False` **et** `nms=True` sur les
-mêmes poids entraînés. Répond à une vraie question : le NMS crée-t-il des doublons sur les
-illustrations pleine page ?
-
-Licence AGPL-3.0, validé pour ce projet.
+- **Split the test set by `parent_ark`, never by view.** Several views of the same
+  work are nearly identical: splitting by view guarantees leakage.
+- **Labels cleaned upstream**: 22 exact duplicates and 1 zero-area box.
+  Checked on 2026-09-17, no other anomaly across the 11,051 `Illustration` boxes.
+- **Keep views without illustrations**: their empty label makes them pure negatives,
+  and the basis of the false-positive metric above.
 
 ---
 
-## 3. Hyperparamètres
+## 2. Model
 
-| Paramètre | Valeur | Motif |
+**YOLO26l.** Current Ultralytics generation (January 2026). Two of its contributions
+target our difficulties directly: **STAL**, a label assignment designed for small
+targets — we have ~1,100 under 1% of the page — and natively **NMS-free** inference.
+
+**NMS ablation, at no cost.** The model is evaluated with `nms=False` **and** `nms=True`
+on the same trained weights. Answers a real question: does NMS create duplicates on
+full-page illustrations?
+
+AGPL-3.0 license, validated for this project.
+
+---
+
+## 3. Hyperparameters
+
+| Parameter | Value | Rationale |
 |---|---|---|
-| `imgsz` | 800 | Résolution du corpus, et multiple de 32. **239 vues (5 %) ne sont pas en 800×800** — surtout des couvertures `-f1` : elles seront letterboxées |
-| `epochs` | 50 | Premier entraînement |
-| `batch` | 6 | Mesuré : 5,1 Go de VRAM à `batch=4` sur les 8,3 Go disponibles. 6 garde une marge |
-| `seed` | fixée | Reproductibilité |
-| `nc` | 1 | Illustrations seules |
+| `imgsz` | 800 | Corpus resolution, and a multiple of 32. **239 views (5%) are not 800×800** — mostly `-f1` covers: they will be letterboxed |
+| `epochs` | 50 | First training run |
+| `batch` | 6 | Measured: 5.1 GB of VRAM at `batch=4` out of the 8.3 GB available. 6 keeps a margin |
+| `seed` | fixed | Reproducibility |
+| `nc` | 1 | Illustrations only |
 
-**Une classe ou deux ?** Les labels fournis contiennent aussi une classe `Texte` (70 % des
-boîtes), qu'on ne livre pas. On entraîne en `nc=1` : les blocs de texte deviennent du fond,
-et le modèle apprend « ne pas détecter ici ». Un run en `nc=2` reste à mesurer en ablation —
-avec un handicap connu : **`Texte` n'est annoté que sur 83 % des vues**, donc y entraîner
-pénaliserait le modèle sur du texte que personne n'a entouré.
+**One class or two?** The provided labels also contain a `Texte` class (70% of the
+boxes), which we do not deliver. We train with `nc=1`: text blocks become background,
+and the model learns "do not detect here". An `nc=2` run remains to be measured as an
+ablation — with a known handicap: **`Texte` is only annotated on 83% of views**, so
+training on it would penalize the model on text that nobody outlined.
 
-**Augmentations — à revoir avant de lancer.** Les défauts Ultralytics visent des photos
-naturelles : `fliplr` retourne le texte des pages, `mosaic` fabrique des mises en page qui
-n'existent pas dans le corpus.
+**Augmentations — to review before launching.** Ultralytics defaults target natural
+photos: `fliplr` mirrors the page text, `mosaic` fabricates layouts that do not exist in
+the corpus.
