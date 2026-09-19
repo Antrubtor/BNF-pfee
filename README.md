@@ -1,3 +1,7 @@
-# BnF : Détection et classification d'images pour Gallica
+<div align="center">
+  <h1>BnF: Image Detection and Classification for Gallica</h1>
 
-Conception d'un pipeline d'IA de Computer Vision pour détecter, segmenter et classifier automatiquement les illustrations patrimoniales de Gallica (BnF).
+  <img src="https://www.bnf.fr/sites/default/files/2024-02/capture_2.jpg" alt="Gallica" width="800">
+</div>
+
+Design of a Computer Vision AI pipeline to automatically detect, segment, and classify heritage illustrations from Gallica (BnF).
