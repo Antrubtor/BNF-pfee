@@ -4,6 +4,8 @@ import time
 import torch
 from torch import nn
 
+from classification.utils import format_time
+
 
 def train_model(
     model,
@@ -70,9 +72,7 @@ def train_model(
             # save model weights after each epoch
             os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
             torch.save(model.state_dict(), save_path)
-            print(
-                f"[Save] Epoch {epoch}/{epochs} weights saved to : {save_path}"
-            )
+            print(f"[Save] Epoch {epoch}/{epochs} weights saved to : {save_path}")
 
     except KeyboardInterrupt:
         print("\n[INTERRUPT] Training stopped by user.")
@@ -81,22 +81,11 @@ def train_model(
         )
 
     total_train_time = time.perf_counter() - start_time_total
-
-    hours = int(total_train_time // 3600)
-    minutes = int((total_train_time % 3600) // 60)
-    seconds = total_train_time % 60
+    time_str = format_time(total_train_time)
 
     print("\n" + "=" * 60)
     print("TOTAL TRAINING TIME")
     print("=" * 60)
-    if hours > 0:
-        time_str = (
-            f"{hours}h {minutes}m {seconds:.2f}s ({total_train_time:.2f} seconds)"
-        )
-    elif minutes > 0:
-        time_str = f"{minutes}m {seconds:.2f}s ({total_train_time:.2f} seconds)"
-    else:
-        time_str = f"{seconds:.2f} seconds"
     print(f"[TIME] Total training time : {time_str}")
 
     return total_train_time

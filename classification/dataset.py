@@ -96,11 +96,11 @@ def load_data(
 
     # Optional subsampling if specified (e.g. for quick tests)
     if max_train_samples is not None and max_train_samples < len(df_train):
-        df_train = df_train.iloc[:max_train_samples]
+        df_train = df_train.head(max_train_samples)
         print(f"[Data] Using a train subset : {len(df_train)} rows")
 
     if max_val_samples is not None and max_val_samples < len(df_val):
-        df_val = df_val.iloc[:max_val_samples]
+        df_val = df_val.head(max_val_samples)
         print(f"[Data] Using a val subset   : {len(df_val)} rows")
 
     # loading class names from the JSON file

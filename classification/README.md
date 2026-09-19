@@ -7,7 +7,7 @@ Simple pipeline to classify images using a ConvNeXt model.
 - `main.py` : Main entry point that runs all steps in order.
 - `dataset.py` : Loads CSVs, prints number of rows, and creates DataLoaders.
 - `model.py` : Initializes ConvNeXt model.
-- `train.py` : Trains for 20 epochs, times the total training time, and saves the weights.
+- `train.py` : Trains for 2 epochs, times the total training time, and saves the weights.
 - `evaluate.py` : Tests on the validation set and writes results to a `.txt` file.
 
 ## Installation
@@ -30,7 +30,7 @@ source .venv/bin/activate # or .venv\Scripts\activate on Windows
 uv run python classification/main.py
 ```
 
-### 2. Quick test (2 epochs on a small sample)
+### 2. Quick test (runs 2 epochs **on a small sample**)
 
 ```bash
 uv run python classification/main.py fast
