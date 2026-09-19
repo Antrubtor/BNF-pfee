@@ -12,3 +12,23 @@ wheels/
 
 datasets/**
 !datasets/README.md
+
+# Dataset
+20250214-segmentation-dataset-iiif/
+datasets/
+
+# Dérivés générés par detection/src/prepare_dataset.py
+detection/data/
+
+# Poids : pré-entraînés (entrées) et produits par l'entraînement (sorties)
+detection/models/
+detection/runs/
+detection/docs/runs/
+*.pt
+
+# Python
+.venv/
+__pycache__/
+
+# AI
+CLAUDE.md
